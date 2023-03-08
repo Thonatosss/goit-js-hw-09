@@ -8,11 +8,14 @@ const fp = flatpickr;
 let startTime = null;
 startBtn.disabled = true;
 
-function updateTimer ({days, hours, minutes, seconds}){
+function updateTimer ({days, hours, minutes, seconds}, timerInervalId){
     document.querySelector('[data-days]').textContent = addLeadingZero(days);
     document.querySelector('[data-hours]').textContent = addLeadingZero(hours);
     document.querySelector('[data-minutes]').textContent = addLeadingZero(minutes);
     document.querySelector('[data-seconds]').textContent = addLeadingZero(seconds);
+    if (days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0) {
+      clearInterval(timerInervalId);
+  }
 
 }   
 function convertMs(ms) {
@@ -43,7 +46,6 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     startTime = selectedDates[0];
-    console.log(selectedDates[0]);
     if (selectedDates[0] < options.defaultDate) {
       Notify.failure('Please choose a date in the future');
       return
@@ -55,24 +57,15 @@ const options = {
 fp(dateInput, options);
 
 const timer = {
-    start() {
-        const currentTime = new Date();
-        let diff = startTime - currentTime;
-        
-        
-        const timerInervalId = setInterval(() => {
-            if(diff <= 0){
-                
-                clearInterval(timerInervalId);
-            }
-            updateTimer(convertMs((diff -= 1000)))
-            
-        }, 1000)
-        
-        
-    }
+  start() {
+      const currentTime = new Date();
+      let diff = startTime - currentTime;
+      
+      const timerInervalId = setInterval(() => {
+          updateTimer(convertMs((diff -= 1000)), timerInervalId);
+      }, 1000)
+  }
 }
-
 startBtn.addEventListener('click', () => {
     timer.start();
 });
