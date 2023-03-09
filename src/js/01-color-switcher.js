@@ -17,12 +17,17 @@ function OnStartBtnClick (){
     timerId = setInterval(() => {
         body.style.backgroundColor = getRandomHexColor();
     }, 1000);
-    startBtn.disabled = true;
+    disableBtn(startBtn, true);
+    disableBtn(stopBtn, false)
 }
 
 function OnStopBtnClick (){
     clearInterval(timerId);
-    stopBtn.disabled = true;
-    startBtn.disabled = false;
+    disableBtn(stopBtn, true);
+    disableBtn(startBtn, false);
+}
+
+function disableBtn(button, option) {
+    return button.disabled = option;
 }
 
